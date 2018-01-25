@@ -14,6 +14,9 @@
 #include "hal_acceler.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define X_CHAN 0
+#define Y_CHAN 1
+#define Z_CHAN 4
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef acceler_x;
@@ -24,6 +27,7 @@ ADC_ChannelConfTypeDef conf_y;
 ADC_ChannelConfTypeDef conf_z;
 
 /* Private function prototypes -----------------------------------------------*/
+static void select_channel(uint8_t);
 static uint16_t adc_read(ADC_HandleTypeDef);
 
 /**
@@ -55,6 +59,7 @@ extern void hal_acceler_init(void) {
     ADC_PINS.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &ADC_PINS);
 
+    // For using interrupts
     // HAL_NVIC_SetPriority(ADC_IRQn, 0, 0);
     // HAL_NVIC_EnableIRQ(ADC_IRQn);
 
@@ -128,29 +133,72 @@ extern void hal_acceler_init(void) {
 }
 
 /**
-  * @brief
-  * @param
-  * @retval
+  * @brief Wrapper function to read the ADC values on each channel
+  * @param pin: Number of the pin to be read
+  * @retval value: Returns directly from the read, the 12-bit number on the ADC
   */
 extern uint16_t acceler_read(int pin) {
     if (pin == 0) {
+        select_channel(X_CHAN);
         return adc_read(acceler_x);
     }
     if (pin == 1) {
+        select_channel(Y_CHAN);
         return adc_read(acceler_y);
     }
     if (pin == 2) {
+        select_channel(Z_CHAN);
         return adc_read(acceler_z);
     }
 }
 
 /**
-  * @brief
-  * @param
-  * @retval
+  * @brief Adjust the rank of the channels to select one based on priority
+  * @param chan: Channel number of the ADC to be used
+  * @retval None
+  */
+static void select_channel(uint8_t chan) {
+    switch (chan) {
+        case 0: // A0 Pin
+            conf_x.Rank = 1;
+            conf_y.Rank = 2;
+            conf_z.Rank = 3;
+            HAL_ADC_ConfigChannel(&acceler_x, &conf_x);
+            HAL_ADC_ConfigChannel(&acceler_y, &conf_y);
+            HAL_ADC_ConfigChannel(&acceler_z, &conf_z);
+            break;
+        case 1: // A1 Pin
+            conf_x.Rank = 2;
+            conf_y.Rank = 1;
+            conf_z.Rank = 3;
+            HAL_ADC_ConfigChannel(&acceler_x, &conf_x);
+            HAL_ADC_ConfigChannel(&acceler_y, &conf_y);
+            HAL_ADC_ConfigChannel(&acceler_z, &conf_z);
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4: // A2 Pin
+            conf_x.Rank = 2;
+            conf_y.Rank = 3;
+            conf_z.Rank = 1;
+            HAL_ADC_ConfigChannel(&acceler_x, &conf_x);
+            HAL_ADC_ConfigChannel(&acceler_y, &conf_y);
+            HAL_ADC_ConfigChannel(&acceler_z, &conf_z);
+            break;
+    }
+}
+
+/**
+  * @brief Reads the value on the ADC associated with the handle
+  * @param handle: ADC_HandleTypeDef struct
+  * @retval value: The 12-bit number read on the ADC
   */
 static uint16_t adc_read(ADC_HandleTypeDef handle) {
     HAL_ADC_Start(&handle);
-    while(HAL_ADC_PollForConversion(&handle, 50) != HAL_OK);
-    return (uint16_t) HAL_ADC_GetValue(&handle);
+    while(HAL_ADC_PollForConversion(&handle, 10) != HAL_OK);
+    uint16_t value = (uint16_t) HAL_ADC_GetValue(&handle);
+    HAL_ADC_Stop(&handle);
+    return value;
 }

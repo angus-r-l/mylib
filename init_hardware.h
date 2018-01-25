@@ -7,8 +7,8 @@
   *          all basic hardware initialisation for all projects
   ******************************************************************************
   */
-#ifndef INIT_HW
-#define INIT_HW
+#ifndef __INIT_HW_H
+#define __INIT_HW_H
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo.h"
