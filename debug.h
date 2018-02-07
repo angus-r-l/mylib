@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    init_hardware.h 
+  * @file    debug.h 
   * @author  Angus Lohrisch
-  * @date    24-01-2017
+  * @date    07-02-2017
   * @brief   This file contains external variables and function protoypes for
-  *          all basic hardware initialisation for all projects
+  *          the usb printing and reading
   ******************************************************************************
   */
-#ifndef __INIT_HW_H
-#define __INIT_HW_H
+#ifndef __INIT_DEBUG_H
+#define __INIT_DEBUG_H
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo.h"
@@ -16,8 +16,8 @@
 /* External define -----------------------------------------------------------*/
 /* External macro ------------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
-Led_TypeDef LED;
 /* External function prototypes ----------------------------------------------*/
-extern void init_hardware(void);
+extern void init_debug(void);
+extern void ssprintf(char*, ...);
 
 #endif
