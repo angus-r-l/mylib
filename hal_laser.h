@@ -1,24 +1,25 @@
 /**
   ******************************************************************************
-  * @file    debug.h 
+  * @file    mylib/hal_laser.h
   * @author  Angus Lohrisch
-  * @date    07-02-2017
-  * @brief   This file contains external variables and function protoypes for
-  *          the usb printing and reading
+  * @date    08-02-2018
+  * @brief   This file contains HAL level external variables and prototypes 
+  *          for the diode laser module
   ******************************************************************************
   */
-#ifndef __DEBUG_H
-#define __DEBUG_H
+#ifndef __HAL_LASER_H
+#define __HAL_LASER_H
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
-#include "stm32f4xx_nucleo.h"
 /* External typedef ----------------------------------------------------------*/
 /* External define -----------------------------------------------------------*/
+#define L_ON      0x00
+#define L_OFF     0x01
 /* External macro ------------------------------------------------------------*/
+#define hal_laser_on() hal_laser_write(L_ON)
+#define hal_laser_off() hal_laser_write(L_OFF)
 /* External variables --------------------------------------------------------*/
 /* External function prototypes ----------------------------------------------*/
-extern void init_debug(void);
-extern int usb_getc(void);
-extern void ssprintf(char*, ...);
+extern void hal_laser_init(void);
+extern void hal_laser_write(uint8_t);
 
 #endif

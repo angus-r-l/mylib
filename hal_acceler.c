@@ -141,14 +141,14 @@ extern uint16_t acceler_read(int pin) {
     if (pin == 0) {
         select_channel(X_CHAN);
         return adc_read(acceler_x);
-    }
-    if (pin == 1) {
+    } else if (pin == 1) {
         select_channel(Y_CHAN);
         return adc_read(acceler_y);
-    }
-    if (pin == 2) {
+    } else if (pin == 2) {
         select_channel(Z_CHAN);
         return adc_read(acceler_z);
+    } else {
+        return 0;
     }
 }
 

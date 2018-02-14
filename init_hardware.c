@@ -16,6 +16,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+GPIO_InitTypeDef USR_BTN;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 
@@ -26,10 +27,9 @@ static void SystemClock_Config(void);
   */
 extern void init_hardware(void) {
 
-    // Probably can put these into a common.h file to use in all projects
-    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
     HAL_Init();
+
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
     // Enable GPIO clocks for USR_LED and USR_BTN
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -40,38 +40,25 @@ extern void init_hardware(void) {
     /* Configure the system clock to 84 MHz */
     SystemClock_Config();
 
-    // // Configure D0/D1 pins for ST-Link VCP serial communication
-    // GPIO_InitTypeDef USART_TX;
-    // GPIO_InitTypeDef USART_RX;
-
-    // USART_TX.Pin = GPIO_PIN_2;
-    // USART_TX.Mode = GPIO_MODE_AF_PP;
-    // USART_TX.Pull = GPIO_NOPULL;
-    // USART_TX.Speed = GPIO_SPEED_FAST;
-    // USART_TX.Alternate = GPIO_AF7_USART2;
-    // HAL_GPIO_Init(GPIOA, &USART_TX);
-
-    // USART_RX.Pin = GPIO_PIN_3;
-    // USART_RX.Mode = GPIO_MODE_AF_PP;
-    // USART_RX.Pull = GPIO_NOPULL;
-    // USART_RX.Speed = GPIO_SPEED_FAST;
-    // USART_RX.Alternate = GPIO_AF7_USART2;
-    // HAL_GPIO_Init(GPIOA, &USART_RX);
-
-    // __USART2_CLK_ENABLE(); // Enable the USART2 clock
-
-    // UART_debug.Instance = USART2;
-    // UART_debug.Init.BaudRate = 115200;
-    // UART_debug.Init.WordLength = UART_WORDLENGTH_8B;
-    // UART_debug.Init.StopBits = UART_STOPBITS_1;
-    // UART_debug.Init.Parity = UART_PARITY_NONE;
-    // UART_debug.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-    // UART_debug.Init.OverSampling = UART_OVERSAMPLING_16;
-    // UART_debug.Init.Mode = UART_MODE_TX_RX;
-    // HAL_UART_Init(&UART_debug);
-
     // Initalise the board LED
     BSP_LED_Init(LED);
+
+    // Initialise the board user button
+    // Interrupt mode
+    USR_BTN.Pin = USER_BUTTON_PIN;
+    USR_BTN.Pull = GPIO_NOPULL;
+    USR_BTN.Mode = GPIO_MODE_IT_RISING_FALLING;
+    USR_BTN.Speed = GPIO_SPEED_FAST;
+    HAL_GPIO_Init(GPIOC, &USR_BTN);
+    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 4, 0);
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
+    //Read mode
+    // USR_BTN.Pin = USER_BUTTON_PIN;
+    // USR_BTN.Pull = GPIO_NOPULL;
+    // USR_BTN.Mode = GPIO_MODE_INPUT;
+    // USR_BTN.Speed = GPIO_SPEED_FAST;
+    // HAL_GPIO_Init(GPIOC, &USR_BTN);
 }
 
 /**

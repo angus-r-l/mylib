@@ -1,24 +1,20 @@
 /**
   ******************************************************************************
-  * @file    debug.h 
+  * @file    mylib/morse.h
   * @author  Angus Lohrisch
-  * @date    07-02-2017
-  * @brief   This file contains external variables and function protoypes for
-  *          the usb printing and reading
+  * @date    08-02-2018
+  * @brief   This file contains external lookup table functions for the morse
+  *          codes for each letter and number
   ******************************************************************************
   */
-#ifndef __DEBUG_H
-#define __DEBUG_H
+#ifndef __MORSE_H
+#define __MORSE_H
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
-#include "stm32f4xx_nucleo.h"
 /* External typedef ----------------------------------------------------------*/
 /* External define -----------------------------------------------------------*/
 /* External macro ------------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* External function prototypes ----------------------------------------------*/
-extern void init_debug(void);
-extern int usb_getc(void);
-extern void ssprintf(char*, ...);
+extern char* morse_get_code(char);
 
 #endif

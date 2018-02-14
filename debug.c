@@ -53,6 +53,12 @@ extern void init_debug(void) {
     HAL_UART_Init(&UART_debug);
 }
 
+extern int usb_getc(void) {
+    uint8_t rxchar = '\0';
+    HAL_UART_Receive(&UART_debug, &rxchar, sizeof(char), 10);
+    return rxchar;
+}
+
 extern void ssprintf(char* fmt, ...) {
     char print_data[128];
     va_list args;
@@ -60,5 +66,5 @@ extern void ssprintf(char* fmt, ...) {
     memset(print_data, 0, sizeof(print_data));
     vsprintf(print_data, fmt, args);
     va_end(args);
-    HAL_UART_Transmit(&UART_debug, print_data, sizeof(print_data), 10);
+    HAL_UART_Transmit(&UART_debug, (uint8_t*) print_data, sizeof(print_data), 50);
 }
